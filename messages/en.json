@@ -1,0 +1,45 @@
+{
+    "HomePage": {
+        "title": "Welcome to our Interior Store",
+        "description": "Scan a QR code on any product to see details and pricing"
+    },
+    "Product": {
+        "emailRequired": "Please enter your email to view prices",
+        "emailLabel": "Email address",
+        "emailPlaceholder": "your@email.com",
+        "submitButton": "View Price",
+        "price": "Price",
+        "description": "Description",
+        "status": {
+            "active": "In Stock",
+            "inactive": "Unavailable",
+            "out_of_stock": "Out of Stock"
+        },
+        "productNotFound": "Product not found",
+        "backToHome": "Back to Home"
+    },
+    "Admin": {
+        "title": "Admin Dashboard",
+        "loginTitle": "Admin Login",
+        "email": "Email",
+        "password": "Password",
+        "loginButton": "Login",
+        "logoutButton": "Logout",
+        "products": "Products",
+        "addProduct": "Add Product",
+        "editProduct": "Edit Product",
+        "productName": "Product Name",
+        "productPrice": "Price",
+        "productDescription": "Description",
+        "productImage": "Image URL",
+        "productStatus": "Status",
+        "saveButton": "Save",
+        "cancelButton": "Cancel",
+        "generateQR": "Generate QR Code",
+        "downloadQR": "Download QR",
+        "scans": "Recent Scans",
+        "scanEmail": "Email",
+        "scanProduct": "Product",
+        "scanTime": "Scanned At"
+    }
+}

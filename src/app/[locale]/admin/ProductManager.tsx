@@ -1,0 +1,327 @@
+'use client'
+
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { createClient } from '@/src/lib/supabase/client'
+import QRCode from 'qrcode'
+import type { Product } from '@/src/lib/types/database'
+
+type Props = {
+  initialProducts: Product[]
+}
+
+export default function ProductManager({ initialProducts }: Props) {
+  const t = useTranslations('Admin')
+  const [products, setProducts] = useState(initialProducts)
+  const [isAdding, setIsAdding] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [formData, setFormData] = useState({
+    name: '',
+    price: '',
+    description: '',
+    image_url: '',
+    status: 'active' as 'active' | 'inactive' | 'out_of_stock'
+  })
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      price: '',
+      description: '',
+      image_url: '',
+      status: 'active'
+    })
+    setIsAdding(false)
+    setEditingId(null)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const supabase = createClient()
+
+    const productData = {
+      name: formData.name,
+      price: parseFloat(formData.price),
+      description: formData.description || null,
+      image_url: formData.image_url || null,
+      status: formData.status
+    }
+
+    if (editingId) {
+      // Update existing product
+      const { data, error } = await supabase
+        .from('products')
+        .update(productData)
+        .eq('id', editingId)
+        .select()
+        .single()
+
+      if (!error && data) {
+        setProducts(products.map(p => p.id === editingId ? data : p))
+      }
+    } else {
+      // Create new product
+      const { data, error } = await supabase
+        .from('products')
+        .insert(productData)
+        .select()
+        .single()
+
+      if (!error && data) {
+        setProducts([data, ...products])
+      }
+    }
+
+    resetForm()
+  }
+
+  const handleEdit = (product: Product) => {
+    setFormData({
+      name: product.name,
+      price: product.price.toString(),
+      description: product.description || '',
+      image_url: product.image_url || '',
+      status: product.status
+    })
+    setEditingId(product.id)
+    setIsAdding(true)
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return
+
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id)
+
+    if (!error) {
+      setProducts(products.filter(p => p.id !== id))
+    }
+  }
+
+  const generateQRCode = async (product: Product) => {
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/nl/product/${product.id}`
+
+    try {
+      const canvas = document.createElement('canvas')
+      await QRCode.toCanvas(canvas, url, {
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      })
+
+      // Create a new canvas for the combined image
+      const combinedCanvas = document.createElement('canvas')
+      const ctx = combinedCanvas.getContext('2d')!
+
+      // Set dimensions
+      combinedCanvas.width = 300
+      combinedCanvas.height = 360
+
+      // Draw white background
+      ctx.fillStyle = 'white'
+      ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height)
+
+      // Draw QR code
+      ctx.drawImage(canvas, 0, 0)
+
+      // Draw product name
+      ctx.fillStyle = 'black'
+      ctx.font = 'bold 16px Arial'
+      ctx.textAlign = 'center'
+
+      // Wrap text if too long
+      const maxWidth = 280
+      const text = product.name
+      const words = text.split(' ')
+      let line = ''
+      let y = 320
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' '
+        const metrics = ctx.measureText(testLine)
+        const testWidth = metrics.width
+
+        if (testWidth > maxWidth && n > 0) {
+          ctx.fillText(line, 150, y)
+          line = words[n] + ' '
+          y += 20
+        } else {
+          line = testLine
+        }
+      }
+      ctx.fillText(line, 150, y)
+
+      // Download the image
+      combinedCanvas.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `qr-${product.name.replace(/\s+/g, '-').toLowerCase()}.png`
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+          URL.revokeObjectURL(url)
+        }
+      })
+    } catch (error) {
+      console.error('Error generating QR code:', error)
+    }
+  }
+
+  return (
+    <div>
+      <div className="mb-6 flex justify-between items-center">
+        <h2 className="text-xl font-semibold">{t('products')}</h2>
+        {!isAdding && (
+          <button
+            onClick={() => setIsAdding(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            {t('addProduct')}
+          </button>
+        )}
+      </div>
+
+      {isAdding && (
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h3 className="text-lg font-semibold mb-4">
+            {editingId ? t('editProduct') : t('addProduct')}
+          </h3>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('productName')}
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('productPrice')}
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.price}
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('productDescription')}
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('productImage')}
+              </label>
+              <input
+                type="url"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('productStatus')}
+              </label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'out_of_stock' })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="out_of_stock">Out of Stock</option>
+              </select>
+            </div>
+
+            <div className="flex space-x-2">
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+              >
+                {t('saveButton')}
+              </button>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400"
+              >
+                {t('cancelButton')}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="grid gap-4">
+        {products.map((product) => (
+          <div key={product.id} className="bg-white p-4 rounded-lg shadow-md">
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold">{product.name}</h3>
+                <p className="text-gray-600">€{product.price}</p>
+                {product.description && (
+                  <p className="text-gray-500 text-sm mt-1">{product.description}</p>
+                )}
+                <span className={`inline-block mt-2 px-2 py-1 text-xs rounded-full
+                  ${product.status === 'active' ? 'bg-green-100 text-green-800' :
+                    product.status === 'out_of_stock' ? 'bg-red-100 text-red-800' :
+                    'bg-gray-100 text-gray-800'}`}>
+                  {product.status}
+                </span>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => generateQRCode(product)}
+                  className="text-blue-600 hover:text-blue-700"
+                  title={t('generateQR')}
+                >
+                  {t('downloadQR')}
+                </button>
+                <button
+                  onClick={() => handleEdit(product)}
+                  className="text-gray-600 hover:text-gray-700"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(product.id)}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,45 @@
+{
+    "HomePage": {
+        "title": "Bienvenue dans notre Magasin d'Intérieur",
+        "description": "Scannez un code QR sur n'importe quel produit pour voir les détails et les prix"
+    },
+    "Product": {
+        "emailRequired": "Veuillez entrer votre e-mail pour voir les prix",
+        "emailLabel": "Adresse e-mail",
+        "emailPlaceholder": "votre@email.fr",
+        "submitButton": "Voir le Prix",
+        "price": "Prix",
+        "description": "Description",
+        "status": {
+            "active": "En stock",
+            "inactive": "Indisponible",
+            "out_of_stock": "Rupture de stock"
+        },
+        "productNotFound": "Produit non trouvé",
+        "backToHome": "Retour à l'Accueil"
+    },
+    "Admin": {
+        "title": "Tableau de Bord Admin",
+        "loginTitle": "Connexion Admin",
+        "email": "E-mail",
+        "password": "Mot de passe",
+        "loginButton": "Se connecter",
+        "logoutButton": "Se déconnecter",
+        "products": "Produits",
+        "addProduct": "Ajouter un Produit",
+        "editProduct": "Modifier le Produit",
+        "productName": "Nom du Produit",
+        "productPrice": "Prix",
+        "productDescription": "Description",
+        "productImage": "URL de l'image",
+        "productStatus": "Statut",
+        "saveButton": "Enregistrer",
+        "cancelButton": "Annuler",
+        "generateQR": "Générer le Code QR",
+        "downloadQR": "Télécharger QR",
+        "scans": "Scans Récents",
+        "scanEmail": "E-mail",
+        "scanProduct": "Produit",
+        "scanTime": "Scanné le"
+    }
+}

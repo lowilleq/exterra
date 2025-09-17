@@ -1,0 +1,45 @@
+{
+    "HomePage": {
+        "title": "Welkom bij onze Interieurwinkel",
+        "description": "Scan een QR-code op een product om details en prijzen te zien"
+    },
+    "Product": {
+        "emailRequired": "Vul uw e-mailadres in om prijzen te bekijken",
+        "emailLabel": "E-mailadres",
+        "emailPlaceholder": "uw@email.nl",
+        "submitButton": "Bekijk Prijs",
+        "price": "Prijs",
+        "description": "Beschrijving",
+        "status": {
+            "active": "Op voorraad",
+            "inactive": "Niet beschikbaar",
+            "out_of_stock": "Uitverkocht"
+        },
+        "productNotFound": "Product niet gevonden",
+        "backToHome": "Terug naar Home"
+    },
+    "Admin": {
+        "title": "Beheerdersdashboard",
+        "loginTitle": "Beheerder Inloggen",
+        "email": "E-mail",
+        "password": "Wachtwoord",
+        "loginButton": "Inloggen",
+        "logoutButton": "Uitloggen",
+        "products": "Producten",
+        "addProduct": "Product Toevoegen",
+        "editProduct": "Product Bewerken",
+        "productName": "Productnaam",
+        "productPrice": "Prijs",
+        "productDescription": "Beschrijving",
+        "productImage": "Afbeelding URL",
+        "productStatus": "Status",
+        "saveButton": "Opslaan",
+        "cancelButton": "Annuleren",
+        "generateQR": "QR-code Genereren",
+        "downloadQR": "Download QR",
+        "scans": "Recente Scans",
+        "scanEmail": "E-mail",
+        "scanProduct": "Product",
+        "scanTime": "Gescand op"
+    }
+}
