@@ -34,7 +34,12 @@
         "productName": "Product Name",
         "productPrice": "Price",
         "productDescription": "Description",
-        "productImage": "Image URL",
+        "productImage": "Product Image",
+        "chooseImage": "Choose Image",
+        "imagePreview": "Preview",
+        "orPasteImageUrl": "Or paste image URL (optional)",
+        "imageUploadHint": "Upload an image or paste a URL. Max size: 5MB",
+        "uploading": "Uploading...",
         "productStatus": "Status",
         "saveButton": "Save",
         "cancelButton": "Cancel",
@@ -51,6 +56,8 @@
         "scanHistory": "Scan History",
         "noScansYet": "No scans yet",
         "noCustomersYet": "No customers yet",
-        "locale": "Language"
+        "locale": "Language",
+        "totalViewed": "Total Value Viewed",
+        "customerSince": "Customer Since"
     }
 }

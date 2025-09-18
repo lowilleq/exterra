@@ -34,7 +34,12 @@
         "productName": "Productnaam",
         "productPrice": "Prijs",
         "productDescription": "Beschrijving",
-        "productImage": "Afbeelding URL",
+        "productImage": "Product afbeelding",
+        "chooseImage": "Kies afbeelding",
+        "imagePreview": "Voorbeeld",
+        "orPasteImageUrl": "Of plak afbeelding URL (optioneel)",
+        "imageUploadHint": "Upload een afbeelding of plak een URL. Max grootte: 5MB",
+        "uploading": "Uploaden...",
         "productStatus": "Status",
         "saveButton": "Opslaan",
         "cancelButton": "Annuleren",
@@ -51,6 +56,8 @@
         "scanHistory": "Scan Geschiedenis",
         "noScansYet": "Nog geen scans",
         "noCustomersYet": "Nog geen klanten",
-        "locale": "Taal"
+        "locale": "Taal",
+        "totalViewed": "Totale waarde bekeken",
+        "customerSince": "Klant sinds"
     }
 }

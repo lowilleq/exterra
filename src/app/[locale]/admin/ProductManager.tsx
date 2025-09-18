@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/src/lib/supabase/client'
 import QRCode from 'qrcode'
@@ -23,6 +23,10 @@ export default function ProductManager({ initialProducts }: Props) {
     status: 'available' as 'available' | 'sold'
   })
   const [priceDisplay, setPriceDisplay] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const resetForm = () => {
     setFormData({
@@ -33,8 +37,13 @@ export default function ProductManager({ initialProducts }: Props) {
       status: 'available'
     })
     setPriceDisplay('')
+    setImageFile(null)
+    setImagePreview(null)
     setIsAdding(false)
     setEditingId(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   const formatPriceInput = (value: string) => {
@@ -76,17 +85,82 @@ export default function ProductManager({ initialProducts }: Props) {
     }
   }
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file')
+        return
+      }
+
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size must be less than 5MB')
+        return
+      }
+
+      setImageFile(file)
+
+      // Create preview
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const supabase = createClient()
+    const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
+    const filePath = `products/${fileName}`
+
+    const { error } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, file)
+
+    if (error) {
+      console.error('Error uploading image:', error)
+      return null
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(filePath)
+
+    return publicUrl
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const supabase = createClient()
+    setUploadingImage(true)
+
+    let imageUrl = formData.image_url
+
+    // Upload image if a file was selected
+    if (imageFile) {
+      const uploadedUrl = await uploadImage(imageFile)
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl
+      } else {
+        alert('Failed to upload image')
+        setUploadingImage(false)
+        return
+      }
+    }
 
     const productData = {
       name: formData.name,
       price: parseFloat(formData.price),
       description: formData.description || null,
-      image_url: formData.image_url || null,
+      image_url: imageUrl || null,
       status: formData.status
     }
+
+    setUploadingImage(false)
 
     if (editingId) {
       // Update existing product
@@ -136,6 +210,13 @@ export default function ProductManager({ initialProducts }: Props) {
           minimumFractionDigits: 2
         }).format(numValue))
       }
+    }
+
+    // Clear any file selection when editing existing product
+    setImageFile(null)
+    setImagePreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
 
     setEditingId(product.id)
@@ -300,12 +381,76 @@ export default function ProductManager({ initialProducts }: Props) {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('productImage')}
               </label>
-              <input
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
+
+              <div className="space-y-2">
+                {/* File upload */}
+                <div className="flex items-center gap-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  <label
+                    htmlFor="image-upload"
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors"
+                  >
+                    {t('chooseImage')}
+                  </label>
+                  {imageFile && (
+                    <span className="text-sm text-gray-600">
+                      {imageFile.name}
+                    </span>
+                  )}
+                </div>
+
+                {/* Image preview */}
+                {(imagePreview || formData.image_url) && (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 mb-1">{t('imagePreview')}:</p>
+                    <div className="relative w-32 h-32">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={imagePreview || formData.image_url}
+                        alt="Product preview"
+                        className="w-full h-full object-cover rounded-lg border border-gray-200"
+                      />
+                      {imagePreview && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setImageFile(null)
+                            setImagePreview(null)
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = ''
+                            }
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* URL input (optional fallback) */}
+                <div>
+                  <input
+                    type="url"
+                    value={formData.image_url}
+                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    placeholder={t('orPasteImageUrl')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    disabled={!!imageFile}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t('imageUploadHint')}
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -325,14 +470,16 @@ export default function ProductManager({ initialProducts }: Props) {
             <div className="flex space-x-2">
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                disabled={uploadingImage}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {t('saveButton')}
+                {uploadingImage ? t('uploading') : t('saveButton')}
               </button>
               <button
                 type="button"
                 onClick={resetForm}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400"
+                disabled={uploadingImage}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t('cancelButton')}
               </button>

@@ -103,12 +103,14 @@ export default function ProductDisplay({ product, locale }: Props) {
 
       <div className="bg-white rounded-lg shadow-md p-6">
         {product.image_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={product.image_url}
-            alt={product.name}
-            className="w-full h-64 object-cover rounded-lg mb-6"
-          />
+          <div className="relative w-full mb-6">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={product.image_url}
+              alt={product.name}
+              className="w-full h-auto max-h-96 object-contain rounded-lg bg-gray-50"
+            />
+          </div>
         )}
 
         <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
