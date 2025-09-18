@@ -4,16 +4,19 @@
         "description": "Scan a QR code on any product to see details and pricing"
     },
     "Product": {
-        "emailRequired": "Please enter your email to view prices",
+        "emailRequired": "Please enter your details to view prices",
+        "firstNameLabel": "First name",
+        "firstNamePlaceholder": "John",
+        "lastNameLabel": "Last name",
+        "lastNamePlaceholder": "Doe",
         "emailLabel": "Email address",
         "emailPlaceholder": "your@email.com",
         "submitButton": "View Price",
         "price": "Price",
         "description": "Description",
         "status": {
-            "active": "In Stock",
-            "inactive": "Unavailable",
-            "out_of_stock": "Out of Stock"
+            "available": "Available",
+            "sold": "Sold"
         },
         "productNotFound": "Product not found",
         "backToHome": "Back to Home"
@@ -38,8 +41,16 @@
         "generateQR": "Generate QR Code",
         "downloadQR": "Download QR",
         "scans": "Recent Scans",
+        "scanCustomer": "Customer",
         "scanEmail": "Email",
         "scanProduct": "Product",
-        "scanTime": "Scanned At"
+        "scanTime": "Scanned At",
+        "customers": "Customers",
+        "lastSeen": "Last seen",
+        "totalScans": "Total scans",
+        "scanHistory": "Scan History",
+        "noScansYet": "No scans yet",
+        "noCustomersYet": "No customers yet",
+        "locale": "Language"
     }
 }

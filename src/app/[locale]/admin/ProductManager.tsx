@@ -20,8 +20,9 @@ export default function ProductManager({ initialProducts }: Props) {
     price: '',
     description: '',
     image_url: '',
-    status: 'active' as 'active' | 'inactive' | 'out_of_stock'
+    status: 'available' as 'available' | 'sold'
   })
+  const [priceDisplay, setPriceDisplay] = useState('')
 
   const resetForm = () => {
     setFormData({
@@ -29,10 +30,50 @@ export default function ProductManager({ initialProducts }: Props) {
       price: '',
       description: '',
       image_url: '',
-      status: 'active'
+      status: 'available'
     })
+    setPriceDisplay('')
     setIsAdding(false)
     setEditingId(null)
+  }
+
+  const formatPriceInput = (value: string) => {
+    // Remove all non-numeric characters except decimal point
+    const cleanValue = value.replace(/[^0-9.]/g, '')
+
+    // Ensure only one decimal point
+    const parts = cleanValue.split('.')
+    if (parts.length > 2) {
+      return parts[0] + '.' + parts.slice(1).join('')
+    }
+
+    // Limit to 2 decimal places
+    if (parts.length === 2 && parts[1].length > 2) {
+      return parts[0] + '.' + parts[1].substring(0, 2)
+    }
+
+    return cleanValue
+  }
+
+  const handlePriceChange = (value: string) => {
+    const cleanedValue = formatPriceInput(value)
+    setFormData({ ...formData, price: cleanedValue })
+
+    // Format for display
+    if (cleanedValue) {
+      const numValue = parseFloat(cleanedValue)
+      if (!isNaN(numValue)) {
+        setPriceDisplay(new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'EUR',
+          minimumFractionDigits: 2
+        }).format(numValue))
+      } else {
+        setPriceDisplay('')
+      }
+    } else {
+      setPriceDisplay('')
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,13 +117,27 @@ export default function ProductManager({ initialProducts }: Props) {
   }
 
   const handleEdit = (product: Product) => {
+    const priceString = product.price.toString()
     setFormData({
       name: product.name,
-      price: product.price.toString(),
+      price: priceString,
       description: product.description || '',
       image_url: product.image_url || '',
       status: product.status
     })
+
+    // Set the price display
+    if (priceString) {
+      const numValue = parseFloat(priceString)
+      if (!isNaN(numValue)) {
+        setPriceDisplay(new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'EUR',
+          minimumFractionDigits: 2
+        }).format(numValue))
+      }
+    }
+
     setEditingId(product.id)
     setIsAdding(true)
   }
@@ -210,16 +265,23 @@ export default function ProductManager({ initialProducts }: Props) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('productPrice')}
+                {t('productPrice')} (EUR)
               </label>
-              <input
-                type="number"
-                step="0.01"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                required
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">€</span>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={formData.price}
+                  onChange={(e) => handlePriceChange(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              {priceDisplay && (
+                <p className="mt-1 text-sm text-gray-600">Preview: {priceDisplay}</p>
+              )}
             </div>
 
             <div>
@@ -252,12 +314,11 @@ export default function ProductManager({ initialProducts }: Props) {
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'out_of_stock' })}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as 'available' | 'sold' })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="out_of_stock">Out of Stock</option>
+                <option value="available">Available</option>
+                <option value="sold">Sold</option>
               </select>
             </div>
 
@@ -286,14 +347,19 @@ export default function ProductManager({ initialProducts }: Props) {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold">{product.name}</h3>
-                <p className="text-gray-600">€{product.price}</p>
+                <p className="text-gray-600">
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'EUR'
+                  }).format(product.price)}
+                </p>
                 {product.description && (
                   <p className="text-gray-500 text-sm mt-1">{product.description}</p>
                 )}
                 <span className={`inline-block mt-2 px-2 py-1 text-xs rounded-full
-                  ${product.status === 'active' ? 'bg-green-100 text-green-800' :
-                    product.status === 'out_of_stock' ? 'bg-red-100 text-red-800' :
-                    'bg-gray-100 text-gray-800'}`}>
+                  ${product.status === 'available' ? 'bg-green-100 text-green-800' :
+                    product.status === 'sold' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'}`}>
                   {product.status}
                 </span>
               </div>

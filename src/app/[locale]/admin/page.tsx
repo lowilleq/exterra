@@ -18,12 +18,55 @@ export default async function AdminPage() {
     .select('*')
     .order('created_at', { ascending: false })
 
-  // Fetch recent scans
+  // Fetch recent scans with customer information
   const { data: scans } = await supabase
     .from('scans')
-    .select('*, products(name)')
+    .select('*, products(name), customers(email, first_name, last_name)')
     .order('scanned_at', { ascending: false })
     .limit(50)
 
-  return <AdminDashboard initialProducts={products || []} initialScans={scans || []} />
+  // Fetch customers with their scan history
+  const { data: customersRaw } = await supabase
+    .from('customers')
+    .select(`
+      email,
+      first_name,
+      last_name,
+      created_at,
+      last_seen_at,
+      scans:scans!customer_email (
+        id,
+        scanned_at,
+        locale,
+        products (
+          id,
+          name,
+          price
+        )
+      )
+    `)
+    .order('created_at', { ascending: false })
+
+  // Transform to match our expected type structure
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const customers = (customersRaw || []).map((customer: any) => ({
+    email: customer.email,
+    first_name: customer.first_name,
+    last_name: customer.last_name,
+    created_at: customer.created_at,
+    last_seen_at: customer.last_seen_at,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    scans: (customer.scans || []).map((scan: any) => ({
+      id: scan.id,
+      scanned_at: scan.scanned_at,
+      locale: scan.locale,
+      products: scan.products || undefined
+    }))
+  }))
+
+  return <AdminDashboard
+    initialProducts={products || []}
+    initialScans={scans || []}
+    initialCustomers={customers}
+  />
 }

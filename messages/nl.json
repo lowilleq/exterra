@@ -4,16 +4,19 @@
         "description": "Scan een QR-code op een product om details en prijzen te zien"
     },
     "Product": {
-        "emailRequired": "Vul uw e-mailadres in om prijzen te bekijken",
+        "emailRequired": "Vul uw gegevens in om prijzen te bekijken",
+        "firstNameLabel": "Voornaam",
+        "firstNamePlaceholder": "Jan",
+        "lastNameLabel": "Achternaam",
+        "lastNamePlaceholder": "Jansen",
         "emailLabel": "E-mailadres",
-        "emailPlaceholder": "uw@email.nl",
+        "emailPlaceholder": "uw@email.com",
         "submitButton": "Bekijk Prijs",
         "price": "Prijs",
         "description": "Beschrijving",
         "status": {
-            "active": "Op voorraad",
-            "inactive": "Niet beschikbaar",
-            "out_of_stock": "Uitverkocht"
+            "available": "Beschikbaar",
+            "sold": "Verkocht"
         },
         "productNotFound": "Product niet gevonden",
         "backToHome": "Terug naar Home"
@@ -38,8 +41,16 @@
         "generateQR": "QR-code Genereren",
         "downloadQR": "Download QR",
         "scans": "Recente Scans",
+        "scanCustomer": "Klant",
         "scanEmail": "E-mail",
         "scanProduct": "Product",
-        "scanTime": "Gescand op"
+        "scanTime": "Gescand op",
+        "customers": "Klanten",
+        "lastSeen": "Laatst gezien",
+        "totalScans": "Totaal scans",
+        "scanHistory": "Scan Geschiedenis",
+        "noScansYet": "Nog geen scans",
+        "noCustomersYet": "Nog geen klanten",
+        "locale": "Taal"
     }
 }

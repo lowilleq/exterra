@@ -16,7 +16,7 @@ export type Database = {
           price: number
           description: string | null
           image_url: string | null
-          status: 'active' | 'inactive' | 'out_of_stock'
+          status: 'available' | 'sold'
           created_at: string
         }
         Insert: {
@@ -25,7 +25,7 @@ export type Database = {
           price: number
           description?: string | null
           image_url?: string | null
-          status?: 'active' | 'inactive' | 'out_of_stock'
+          status?: 'available' | 'sold'
           created_at?: string
         }
         Update: {
@@ -34,7 +34,7 @@ export type Database = {
           price?: number
           description?: string | null
           image_url?: string | null
-          status?: 'active' | 'inactive' | 'out_of_stock'
+          status?: 'available' | 'sold'
           created_at?: string
         }
       }

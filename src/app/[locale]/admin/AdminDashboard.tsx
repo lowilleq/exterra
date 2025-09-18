@@ -6,26 +6,51 @@ import { createClient } from '@/src/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import ProductManager from './ProductManager'
 import ScansList from './ScansList'
+import CustomersList from './CustomersList'
 import type { Product } from '@/src/lib/types/database'
 
 type ScanWithProduct = {
   id: string
-  email: string
+  customer_email: string
   product_id: string
   scanned_at: string
   locale: string | null
   products?: { name: string }
+  customers?: {
+    email: string
+    first_name: string
+    last_name: string
+  }
+}
+
+type CustomerWithScans = {
+  email: string
+  first_name: string
+  last_name: string
+  created_at: string
+  last_seen_at: string
+  scans: Array<{
+    id: string
+    scanned_at: string
+    locale: string | null
+    products?: {
+      id: string
+      name: string
+      price: number
+    }
+  }>
 }
 
 type Props = {
   initialProducts: Product[]
   initialScans: ScanWithProduct[]
+  initialCustomers: CustomerWithScans[]
 }
 
-export default function AdminDashboard({ initialProducts, initialScans }: Props) {
+export default function AdminDashboard({ initialProducts, initialScans, initialCustomers }: Props) {
   const t = useTranslations('Admin')
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'products' | 'scans'>('products')
+  const [activeTab, setActiveTab] = useState<'products' | 'scans' | 'customers'>('products')
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -72,13 +97,25 @@ export default function AdminDashboard({ initialProducts, initialScans }: Props)
             >
               {t('scans')}
             </button>
+            <button
+              onClick={() => setActiveTab('customers')}
+              className={`pb-2 px-4 ${
+                activeTab === 'customers'
+                  ? 'border-b-2 border-blue-600 text-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {t('customers')}
+            </button>
           </div>
         </div>
 
         {activeTab === 'products' ? (
           <ProductManager initialProducts={initialProducts} />
-        ) : (
+        ) : activeTab === 'scans' ? (
           <ScansList initialScans={initialScans} />
+        ) : (
+          <CustomersList initialCustomers={initialCustomers} />
         )}
       </div>
     </div>

@@ -4,11 +4,16 @@ import { useTranslations } from 'next-intl'
 
 type ScanWithProduct = {
   id: string
-  email: string
+  customer_email: string
   product_id: string
   scanned_at: string
   locale: string | null
   products?: { name: string }
+  customers?: {
+    email: string
+    first_name: string
+    last_name: string
+  }
 }
 
 type Props = {
@@ -38,6 +43,9 @@ export default function ScansList({ initialScans }: Props) {
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('scanCustomer')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('scanEmail')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -52,7 +60,12 @@ export default function ScansList({ initialScans }: Props) {
               {initialScans.map((scan) => (
                 <tr key={scan.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {scan.email}
+                    {scan.customers
+                      ? `${scan.customers.first_name} ${scan.customers.last_name}`
+                      : 'Unknown Customer'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {scan.customer_email}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {scan.products?.name || 'Unknown Product'}
@@ -64,7 +77,7 @@ export default function ScansList({ initialScans }: Props) {
               ))}
               {initialScans.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
                     No scans yet
                   </td>
                 </tr>

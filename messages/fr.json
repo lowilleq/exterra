@@ -4,16 +4,19 @@
         "description": "Scannez un code QR sur n'importe quel produit pour voir les détails et les prix"
     },
     "Product": {
-        "emailRequired": "Veuillez entrer votre e-mail pour voir les prix",
+        "emailRequired": "Veuillez entrer vos coordonnées pour voir les prix",
+        "firstNameLabel": "Prénom",
+        "firstNamePlaceholder": "Jean",
+        "lastNameLabel": "Nom de famille",
+        "lastNamePlaceholder": "Dupont",
         "emailLabel": "Adresse e-mail",
-        "emailPlaceholder": "votre@email.fr",
+        "emailPlaceholder": "votre@email.com",
         "submitButton": "Voir le Prix",
         "price": "Prix",
         "description": "Description",
         "status": {
-            "active": "En stock",
-            "inactive": "Indisponible",
-            "out_of_stock": "Rupture de stock"
+            "available": "Disponible",
+            "sold": "Vendu"
         },
         "productNotFound": "Produit non trouvé",
         "backToHome": "Retour à l'Accueil"
@@ -38,8 +41,16 @@
         "generateQR": "Générer le Code QR",
         "downloadQR": "Télécharger QR",
         "scans": "Scans Récents",
+        "scanCustomer": "Client",
         "scanEmail": "E-mail",
         "scanProduct": "Produit",
-        "scanTime": "Scanné le"
+        "scanTime": "Scanné le",
+        "customers": "Clients",
+        "lastSeen": "Dernière visite",
+        "totalScans": "Total des scans",
+        "scanHistory": "Historique des scans",
+        "noScansYet": "Aucun scan pour le moment",
+        "noCustomersYet": "Aucun client pour le moment",
+        "locale": "Langue"
     }
 }
