@@ -1,7 +1,21 @@
 {
     "HomePage": {
         "title": "Bienvenue chez Ex Terra",
-        "description": "Scannez un code QR sur n'importe quel produit pour voir les détails et les prix"
+        "description": "Découvrez les détails et prix des produits instantanément",
+        "scanTitle": "Scanner le Code QR du Produit",
+        "scanDescription": "Pointez votre caméra vers un code QR dans notre magasin",
+        "scanInstructions": "Pour scanner les codes QR",
+        "openCameraApp": "Ouvrez l'application caméra de votre téléphone et pointez-la vers le code QR",
+        "iosAndroidHint": "Fonctionne sur iPhone et Android - aucune application nécessaire",
+        "or": "ou",
+        "enterProductCode": "Entrer le code produit",
+        "productCodePlaceholder": "Entrez le code de l'étiquette du produit",
+        "viewProduct": "Voir le produit",
+        "howItWorks": "Comment ça marche",
+        "step1": "Trouvez un produit avec une étiquette code QR",
+        "step2": "Ouvrez votre caméra et pointez vers le code QR",
+        "step3": "Appuyez sur le lien qui apparaît pour voir les détails et les prix",
+        "adminAccess": "Admin"
     },
     "Product": {
         "emailRequired": "Veuillez entrer vos coordonnées pour voir les prix",

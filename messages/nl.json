@@ -1,7 +1,21 @@
 {
     "HomePage": {
         "title": "Welkom bij Ex Terra",
-        "description": "Scan een QR-code op een product om details en prijzen te zien"
+        "description": "Ontdek productdetails en prijzen direct",
+        "scanTitle": "Scan Product QR-Code",
+        "scanDescription": "Richt uw camera op een QR-code in onze winkel",
+        "scanInstructions": "Om QR-codes te scannen",
+        "openCameraApp": "Open de camera-app van uw telefoon en richt deze op de QR-code",
+        "iosAndroidHint": "Werkt op iPhone en Android - geen app nodig",
+        "or": "of",
+        "enterProductCode": "Productcode invoeren",
+        "productCodePlaceholder": "Voer code van productlabel in",
+        "viewProduct": "Bekijk product",
+        "howItWorks": "Hoe het werkt",
+        "step1": "Vind een product met een QR-code label",
+        "step2": "Open uw telefoon camera en richt op de QR-code",
+        "step3": "Tik op de link die verschijnt om details en prijzen te bekijken",
+        "adminAccess": "Admin"
     },
     "Product": {
         "emailRequired": "Vul uw gegevens in om prijzen te bekijken",

@@ -1,7 +1,21 @@
 {
     "HomePage": {
         "title": "Welcome to Ex Terra",
-        "description": "Scan a QR code on any product to see details and pricing"
+        "description": "Discover product details and pricing instantly",
+        "scanTitle": "Scan Product QR Code",
+        "scanDescription": "Point your camera at any QR code in our store",
+        "scanInstructions": "To scan QR codes",
+        "openCameraApp": "Open your phone's camera app and point it at the QR code",
+        "iosAndroidHint": "Works on iPhone and Android - no app needed",
+        "or": "or",
+        "enterProductCode": "Enter product code",
+        "productCodePlaceholder": "Enter code from product label",
+        "viewProduct": "View Product",
+        "howItWorks": "How it works",
+        "step1": "Find a product with a QR code label",
+        "step2": "Open your phone camera and point at the QR code",
+        "step3": "Tap the link that appears to view details and pricing",
+        "adminAccess": "Admin"
     },
     "Product": {
         "emailRequired": "Please enter your details to view prices",
